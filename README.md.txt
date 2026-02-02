@@ -1,6 +1,6 @@
 readDWCA
 
-This repository contains an R script for reading, processing, and exporting Darwin Core Archive (DwC-A) datasets, with a focus on LifeWatch zooplankton imaging data from the Belgian Part of the North Sea.
+This repository contains an R script for reading, processing, and exporting Darwin Core Archive (DwC-A) datasets, with a focus on LifeWatch zooplankton imaging data from the Belgian part of the North Sea.
 
 The script unzips a Darwin Core Archive, reads the core tables (event, occurrence, and extendedmeasurementorfact), performs data cleaning and filtering, derives taxonomic information from occurrence identifiers, merges all relevant tables, and exports a flat, analysis-ready CSV file.
 

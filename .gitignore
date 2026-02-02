@@ -8,4 +8,5 @@ config/config.R
 
 # Large or local data
 data/*.zip
+output/*.csv
 
