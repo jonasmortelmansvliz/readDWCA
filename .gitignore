@@ -1,6 +1,14 @@
-.Rproj.user
+# R stuff
 .Rhistory
 .RData
-.Ruserdata
-config/config.R
-rsconnect/
+.Rproj.user/
+
+# Outputs (never commit)
+output/
+export/
+
+# Large or local data
+data/*.zip
+
+# Config overrides (optional, see below)
+config/config.local.R
