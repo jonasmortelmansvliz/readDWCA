@@ -66,13 +66,11 @@ final_df$eventDate <- as.Date(final_df$eventDate, format="%Y-%m-%dT%H:%MZ")
 # Plot the timeline of events
 library(ggplot2)
 
-
 ggplot(final_df, aes(x = eventDate)) +
   geom_histogram(binwidth = 30, fill = "blue", color = "black", alpha = 0.7) +
   geom_density(aes(y = ..density..), color = "red", size = 1) +
   labs(title = "Timeline of Events", x = "Event Date", y = "Count") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
 
 # calanoida_df <- final_df[grep("Calanoida", final_df$scientificName), ]
 # calanoida_df$measurementValue <- as.numeric(calanoida_df$measurementValue)
@@ -80,7 +78,6 @@ ggplot(final_df, aes(x = eventDate)) +
 #   geom_point(color = "red") +  # Add points to show individual measurements
 #   labs(title = "Measurement Values of Calanoida Over Time", x = "Event Date", y = "Measurement Value") +
 #   theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
 
 zip_file_name <- tools::file_path_sans_ext(basename(zip_file_path))
 output_path <- file.path("output", paste0(zip_file_name, ".csv"))
