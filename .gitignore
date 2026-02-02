@@ -2,6 +2,8 @@
 .Rhistory
 .RData
 .Rproj.user/
+config/config.R
+
 
 # Outputs (never commit)
 output/
