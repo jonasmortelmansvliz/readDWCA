@@ -13,8 +13,15 @@ library(tidyr)
 # Define the path to the ZIP file and the extraction location
 zip_file_path <- ZIP_DWCA_ZOOPLANKTON
 
-file.remove(list.files(EXTRACT_DIR, full.names = TRUE))
-file.remove(list.files(OUTPUT_DIR, full.names = TRUE))
+reset_dir <- function(path) {
+  if (dir.exists(path)) {
+    unlink(path, recursive = TRUE, force = TRUE)
+  }
+  dir.create(path, recursive = TRUE, showWarnings = FALSE)
+}
+
+reset_dir(EXTRACT_DIR)
+reset_dir(OUTPUT_DIR)
 
 # Unzip the file
 unzip(zip_file_path, exdir = EXTRACT_DIR)
