@@ -1,42 +1,37 @@
-# Citation
+readDWCA
 
-Mortelmans, J. (2026). jonasmortelmansvliz/ImagingValidationApp: v1.0.1 (v1.0.1). Zenodo. https://doi.org/10.5281/zenodo.18429119
+This repository contains an R script for reading, processing, and exporting Darwin Core Archive (DwC-A) datasets, with a focus on LifeWatch zooplankton imaging data from the Belgian Part of the North Sea.
 
+The script unzips a Darwin Core Archive, reads the core tables (event, occurrence, and extendedmeasurementorfact), performs data cleaning and filtering, derives taxonomic information from occurrence identifiers, merges all relevant tables, and exports a flat, analysis-ready CSV file.
 
+All file paths are defined outside the main script using a configuration file to ensure portability and reproducibility across systems.
 
-# ImagingValidationApp
+Usage
 
-**A Shiny-based tool for manual labeling of plankton images from the Pi-10 Plankton Imager.**
+Place a Darwin Core Archive (.zip) file in the data/ directory.
 
----
+Update the ZIP filename in config/config.R if necessary.
 
-## Overview
+Run the script readDWCA.R in R.
 
-`ImagingValidationApp` is an interactive Shiny application designed to:
+The processed dataset is written to the export/ directory as a CSV file named after the input archive.
 
-- Browse `.tif` plankton images in subfolders.
-- Select images and assign labels based on taxonomy.
-- Track progress for each subfolder and overall dataset.
-- Export validated labels to CSV files for downstream analysis.
+Dependencies
 
-The app dynamically generates label buttons based on a taxonomy file and color-codes them according to type (e.g., detritus, phytoplankton, copepod).
+The script requires the following R packages:
 
----
+dplyr
 
-## Features
+tidyr
 
-- **Dynamic taxonomy buttons**: Buttons are generated from `taxonomy.csv`, with type-specific colors.
-- **Progress tracking**: Overall dataset and per-subfolder progress bars with a playful copepod icon.
-- **Caching**: Efficient loading of `.tif` images using base64 encoding.
-- **Export**: Save labeled datasets to CSV files.
-- **Validate All**: Option to validate all images in a folder with a single click.
-- **User tracking**: Labels are saved along with the username for multiple annotators.
+ggplot2
 
----
+Notes
 
-## Installation
+Large input files and generated outputs are excluded from version control.
+The workflow is intended for exploratory analysis and data preparation.
 
-1. Clone this repository:
+Author
 
-```bash
-git clone https://github.com/jonasmortelmansvliz/ImagingValidationApp.git
+Jonas Mortelmans
+Flanders Marine Institute (VLIZ)
