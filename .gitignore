@@ -6,13 +6,6 @@ config/config.R
 
 
 
-
-# Outputs (never commit)
-output/
-export/
-
 # Large or local data
 data/*.zip
 
-# Config overrides (optional, see below)
-config/config.local.R
