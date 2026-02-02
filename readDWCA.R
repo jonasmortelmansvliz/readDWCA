@@ -66,7 +66,6 @@ final_df$eventDate <- as.Date(final_df$eventDate, format="%Y-%m-%dT%H:%MZ")
 # Plot the timeline of events
 library(ggplot2)
 
-str(final_df)
 
 ggplot(final_df, aes(x = eventDate)) +
   geom_histogram(binwidth = 30, fill = "blue", color = "black", alpha = 0.7) +
