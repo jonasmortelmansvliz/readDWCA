@@ -20,7 +20,6 @@ datasets <- list(
 )
 
 
-
 # Ensure 'data' and 'output' folders exist
 data_dir <- file.path(BASE_DIR, "data")
 if (!dir.exists(data_dir)) dir.create(data_dir, recursive = TRUE)
@@ -98,8 +97,6 @@ process_dwca <- function(zip_file_path) {
     "rightsHolder", "language", "id.y", "identificationReferences",
     "identificationVerificationStatus", 'type', 'associatedMedia'
   ))]
-  
-  
   
   
   # Keep raw eventDate as character
