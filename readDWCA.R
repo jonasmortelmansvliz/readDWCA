@@ -15,14 +15,19 @@ library(tools)
 
 # Base URLs for the latest DwC-A datasets
 datasets <- list(
-  zoo = "https://ipt.vliz.be/upload/archive.do?r=lifewatch_zooplankton",
-  phyto = "https://ipt.vliz.be/upload/archive.do?r=fyto"
+  zoo = "https://ipt.vliz.be/eurobis/archive.do?r=vliz-zooscan"
+  #phyto = "https://ipt.vliz.be/upload/archive.do?r=fyto"
 )
+
+
 
 # Ensure 'data' and 'output' folders exist
 data_dir <- file.path(BASE_DIR, "data")
 if (!dir.exists(data_dir)) dir.create(data_dir, recursive = TRUE)
 if (!dir.exists(OUTPUT_DIR)) dir.create(OUTPUT_DIR, recursive = TRUE)
+if (!dir.exists(EXTRACT_DIR)) dir.create(EXTRACT_DIR, recursive = TRUE)
+
+
 
 # Helper function to download latest DwC-A with versioned filename
 download_dwca <- function(url, data_dir) {
@@ -53,6 +58,10 @@ process_dwca <- function(zip_file_path) {
   # Read main tables
   event_df <- read.table(file.path(EXTRACT_DIR, "event.txt"), header = TRUE, sep = "\t", quote = "")
   occurrence_df <- read.table(file.path(EXTRACT_DIR, "occurrence.txt"), header = TRUE, sep = "\t", quote = "")
+  if (!("occurrenceID" %in% names(occurrence_df)) && ("id" %in% names(occurrence_df))) {
+    names(occurrence_df)[names(occurrence_df) == "id"] <- "occurrenceID"
+  }
+  print(head(names(occurrence_df), 30))
   extended_measures_df <- read.table(file.path(EXTRACT_DIR, "extendedmeasurementorfact.txt"), header = TRUE, sep = "\t", quote = "")
   
   # Clean extended measures
@@ -90,8 +99,18 @@ process_dwca <- function(zip_file_path) {
     "identificationVerificationStatus", 'type', 'associatedMedia'
   ))]
   
-  # Convert eventDate
-  final_df$eventDate <- as.Date(final_df$eventDate, format="%Y-%m-%dT%H:%MZ")
+  
+  
+  
+  # Keep raw eventDate as character
+  eventDate_raw <- as.character(final_df$eventDate)
+  eventDate_start <- sub("/.*", "", eventDate_raw)
+  final_df$eventDate <- as.Date(substr(eventDate_start, 1, 10))
+  
+  # Optional: quick checks
+  print(summary(final_df$eventDate))
+  print(range(final_df$eventDate, na.rm = TRUE))
+  print(table(format(final_df$eventDate, "%Y"), useNA = "ifany"))
   
   # Save CSV
   zip_file_name <- tools::file_path_sans_ext(basename(zip_file_path))
@@ -99,7 +118,7 @@ process_dwca <- function(zip_file_path) {
   write.csv(final_df, output_path, row.names = FALSE)
   
   # Cleanup extraction folder
-  file.remove(list.files(EXTRACT_DIR, full.names = TRUE))
+  #file.remove(list.files(EXTRACT_DIR, full.names = TRUE))
   
   cat("Processed and saved:", output_path, "\n")
   return(final_df)
@@ -112,11 +131,22 @@ for (ds in names(datasets)) {
   final_data[[ds]] <- process_dwca(zip_path)
 }
 
-# Optional: quick timeline plots for both
+
+
+# # Loop through datasets and save plots
+fig_dir <- file.path(BASE_DIR, "figures")
+if (!dir.exists(fig_dir)) dir.create(fig_dir, recursive = TRUE)
+
 for (ds in names(final_data)) {
-  ggplot(final_data[[ds]], aes(x = eventDate)) +
+  p <- ggplot(final_data[[ds]], aes(x = eventDate)) +
     geom_histogram(binwidth = 30, fill = "blue", color = "black", alpha = 0.7) +
     geom_density(aes(y = ..density..), color = "red", size = 1) +
     labs(title = paste0("Timeline of Events: ", ds), x = "Event Date", y = "Count") +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  
+  # Save plot as PNG (or PDF if preferred)
+  fig_path <- file.path(fig_dir, paste0("timeline_", ds, ".png"))
+  ggsave(fig_path, p, width = 10, height = 6, dpi = 300)
+  
+  cat("Saved timeline plot for", ds, "to", fig_path, "\n")
 }
