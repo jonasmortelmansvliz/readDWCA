@@ -15,8 +15,8 @@ library(tools)
 
 # Base URLs for the latest DwC-A datasets
 datasets <- list(
-  zoo = "https://ipt.vliz.be/eurobis/archive.do?r=vliz-zooscan"
-  #phyto = "https://ipt.vliz.be/upload/archive.do?r=fyto"
+  zoo = "https://ipt.vliz.be/eurobis/archive.do?r=vliz-zooscan",
+  phyto = "https://ipt.vliz.be/eurobis/archive.do?r=vliz-flowcam"
 )
 
 
@@ -30,18 +30,31 @@ if (!dir.exists(EXTRACT_DIR)) dir.create(EXTRACT_DIR, recursive = TRUE)
 
 # Helper function to download latest DwC-A with versioned filename
 download_dwca <- function(url, data_dir) {
-  # HEAD request to get actual filename from IPT
   res <- HEAD(url, followlocation = TRUE)
   hdr <- headers(res)
-  filename <- sub(".*filename=\"([^\"]+)\".*", "\\1", hdr$`content-disposition`)
   
-  if (is.na(filename) || filename == "") {
-    # fallback name
-    filename <- paste0("dwca-", basename(url), "-latest.zip")
+  filename <- NULL
+  cd <- hdr[["content-disposition"]]
+  
+  if (!is.null(cd) && length(cd) == 1 && !is.na(cd) &&
+      grepl('filename="?[^"]+"?', cd)) {
+    filename <- sub('.*filename="?([^";]+)"?.*', "\\1", cd)
+  }
+  
+  if (is.null(filename) || length(filename) == 0 || is.na(filename) || filename == "") {
+    final_url <- res$url
+    filename <- basename(final_url)
+    
+    if (is.null(filename) || length(filename) == 0 || is.na(filename) || filename == "") {
+      filename <- "dwca-latest.zip"
+    }
   }
   
   zip_file_path <- file.path(data_dir, filename)
-  GET(url, write_disk(zip_file_path, overwrite = TRUE))
+  
+  res_get <- GET(url, write_disk(zip_file_path, overwrite = TRUE), followlocation = TRUE)
+  stop_for_status(res_get)
+  
   return(zip_file_path)
 }
 
