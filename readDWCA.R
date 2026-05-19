@@ -1,7 +1,7 @@
 #### AUTHOR: Jonas Mortelmans
 #### VERSION: V1.0.03
 
-rm(list = ls())
+#rm(list = ls())
 
 source("./config/config.R")  
 setwd(BASE_DIR)
@@ -107,7 +107,7 @@ process_dwca <- function(zip_file_path) {
   # Remove unnecessary columns
   final_df <- final_df[, !(names(final_df) %in% c(
     "country", "countryCode", "waterBody", "ownerInstitutionCode", "accessRights",
-    "rightsHolder", "language", "id.y", "identificationReferences",
+    "rightsHolder", "language", "id.y","id.x", "identificationReferences",
     "identificationVerificationStatus", 'type', 'associatedMedia'
   ))]
   
